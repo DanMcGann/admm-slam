@@ -13,3 +13,5 @@ scripts/results_blocks_world/
 *.ps
 *.swp
 
+.vscode/
+build/
