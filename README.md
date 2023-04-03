@@ -1,3 +1,11 @@
+Fork Details
+===================================================
+The purpose of this fork is to...
+1. Modernize the cmake build system used by the repo so that it can easily be incorporated as a submodule and a call to `add_subdirectory(admm-slam)` by user code.
+2. Templatize the ADMM class to enable working with Pose2 and Pose3 objects
+3. Bug fix some type and namespacing issues
+
+
 ADMM-SLAM
 ===================================================
 This library is an implementation of the algorithm described in Exactly Sparse Memory Efficient SLAM using the 
