@@ -128,14 +128,14 @@ int main(int argc, char* argv[])
   boost::tie(sub_graphs, sub_initials) = partitionGraph(graph,
                                                         initial,
                                                         posePrior,
-                                                        num_subgraphs,
+                                                        2,
                                                         useMetisPartitioning,
                                                         useLineGraph, orderSubgraphs);
 
   //////////////////////////////////////////////////////////////////////////////////////
   /// Creating Separator vector
   //////////////////////////////////////////////////////////////////////////////////////
-  vector<int> separators = createSeparators(sub_initials, initial);
+  vector<size_t> separators = createSeparators(sub_initials, initial);
 
 
   // Write down the G2o files
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
   /// ADMM
   //////////////////////////////////////////////////////////////////////////////////////
   // Construct ADMM
-  ADMM admm(rho,
+  ADMM<Pose2> admm(rho,
             mu,
             tau,
             maxIter,
@@ -169,8 +169,8 @@ int main(int argc, char* argv[])
             min_d_res,
             output_dir);
 
-  admm.setSolver(ADMM::Solver(solver));
-  admm.setVerbosity(ADMM::Verbosity(verbosity));
+  admm.setSolver(ADMM<Pose2>::Solver(solver));
+  admm.setVerbosity(ADMM<Pose2>::Verbosity(verbosity));
 
   // Load structures
   admm.load(sub_graphs, sub_initials, separators, graph);
@@ -185,10 +185,10 @@ int main(int argc, char* argv[])
     boost::tie(sub_graphs, sub_initials) = partitionGraph(graph,
                                                           initial,
                                                           posePrior,
-                                                          num_subgraphs,
+                                                          2,
                                                           useMetisPartitioning,
                                                           useLineGraph, orderSubgraphs);
-    vector<int> separators = createSeparators(sub_initials, initial);
+    vector<size_t> separators = createSeparators(sub_initials, initial);
     admm.load(sub_graphs, sub_initials, separators, graph);
     primalDualResult = admm.optimize();
   }

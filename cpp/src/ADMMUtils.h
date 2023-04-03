@@ -197,10 +197,10 @@ partitionGraph(gtsam::NonlinearFactorGraph graph,
         gtsam::Key key0 =  graph[factor_id]->keys()[0];
         gtsam::Key key1 =  graph[factor_id]->keys()[1];
 
-        size_t key0Index = gtsam::symbolIndex(key0);
-        size_t key1Index = gtsam::symbolIndex(key1);
+        int key0Index = gtsam::symbolIndex(key0);
+        int key1Index = gtsam::symbolIndex(key1);
 
-        if(abs(key0Index - key1Index)==1){  // Increase i only when its an odometry constraint
+        if(std::abs(key0Index - key1Index)==1){  // Increase i only when its an odometry constraint
           i++;
         }
 
@@ -249,10 +249,10 @@ partitionGraph(gtsam::NonlinearFactorGraph graph,
 }
 
 /********************************************************************************************/
-std::vector<int>
+std::vector<size_t>
 createSeparators(std::vector<gtsam::Values> sub_initials, gtsam::Values initial){
   size_t num_subgraphs = sub_initials.size();
-  std::vector<int> separators;
+  std::vector<size_t> separators;
   for (const gtsam::Values::ConstKeyValuePair &keyValue: initial ){
     gtsam::Key key = keyValue.key;
     size_t keyCounter = 0; // counts how many pairs of subgraphs the node separates
@@ -304,12 +304,12 @@ void logResults(std::vector<gtsam::NonlinearFactorGraph> sub_graphs,
   graphWithPrior.add(posePrior);
 
   // Optimize centralized graph
-  ADMM::Time GN_start = boost::posix_time::microsec_clock::local_time ();    // GN start timer
+  boost::posix_time::ptime GN_start = boost::posix_time::microsec_clock::local_time ();    // GN start timer
   gtsam::GaussNewtonParams params;
   gtsam::GaussNewtonOptimizer GNoptimizer(graphWithPrior, initial, params);
 
   gtsam::Values GNresult = GNoptimizer.optimize();
-  ADMM::Time GN_end = boost::posix_time::microsec_clock::local_time (); // GN end timer
+  boost::posix_time::ptime GN_end = boost::posix_time::microsec_clock::local_time (); // GN end timer
   boost::posix_time::time_duration GN_time = GN_end - GN_start;
   double GN_duration_microsec = GN_time.total_microseconds();
   std::cout << "Centralized error GN " << graph.error(GNresult) << std::endl;

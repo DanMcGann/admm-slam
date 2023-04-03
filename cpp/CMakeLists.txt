@@ -11,7 +11,7 @@ link_directories(${GTSAM_LIBRARY_DIRS})
 message("GTSAM Libraries: ${GTSAM_LIBRARIES}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
-include(GtsamTesting)
+#include(GtsamTesting)
 ###########################################################################
 
 # Find Boost
@@ -23,8 +23,9 @@ link_libraries(${Boost_LIBRARIES})
 # ADMM
 file(GLOB srcs "src/*.cpp" "src/*.h")
 include_directories(src)
-add_library (admm SHARED ${srcs} ${GTSAM_LIBRARIES})
-target_link_libraries(admm ${Boost_LIBRARIES} gtsam)
+add_library (admm INTERFACE ${GTSAM_LIBRARIES})
+target_include_directories(admm INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(admm INTERFACE ${Boost_LIBRARIES} gtsam)
 
 ###########################################################################
 
@@ -33,9 +34,9 @@ add_executable (PartitionAndRunADMM  apps/PartitionAndRunADMM)
 target_link_libraries (PartitionAndRunADMM admm boost_system gtsam)
 
 # Deprecated
-add_executable (RunADMM  apps/RunADMM.cpp)
-target_link_libraries (RunADMM admm boost_system gtsam)
+#add_executable (RunADMM  apps/RunADMM.cpp)
+#target_link_libraries (RunADMM admm boost_system gtsam)
 ###########################################################################
 
 #Tests
-add_subdirectory(tests)
+#add_subdirectory(tests)

@@ -71,7 +71,7 @@ namespace gtsam {
 
     /** vector of errors */
     Vector evaluateError(const T& p, boost::optional<Matrix&> H = boost::none) const {
-      if (H) (*H) = eye(traits<T>::GetDimension(p));
+      if (H) (*H) = Matrix::Identity(traits<T>::GetDimension(p), traits<T>::GetDimension(p));
       // manifold equivalent of h(x)-z -> log(z,h(x))
       // TODO(ASL) Add Jacobians.
       Vector rval = traits<T>::Local(prior_,p);

@@ -27,6 +27,7 @@
 #include <sstream>
 
 /** @brief The ADMM class */
+template<class POSE_TYPE>
 class ADMM
 {
   public:
@@ -134,13 +135,17 @@ class ADMM
      */
     void load(std::vector< gtsam::NonlinearFactorGraph > subgraphs,
                    std::vector<gtsam::Values> subinitials,
-                   std::vector<int> separators,
+                   std::vector<size_t> separators,
                    gtsam::NonlinearFactorGraph fullGraph = gtsam::NonlinearFactorGraph()){
       subgraphs_ = subgraphs;
       subinitials_ = subinitials;
       separators_ = separators;
       fullGraph_ = fullGraph;
-      uall_k = std::vector<double>(separators_.size(), 0.0f); // scaled dual variables: u_k = y_k/rho (scaling by 1/rho won't have any effect initially since y_k = 0)
+
+      nrSeparators_ = separators_.size() / 3;
+      gtsam::Key rand_key = subinitials.front().keys().front();
+      dualDimension_ = gtsam::traits<POSE_TYPE>::GetDimension(subinitials.front().at<POSE_TYPE>(rand_key));
+      uall_k = std::vector<double>(nrSeparators_ * dualDimension_, 0.0f); // scaled dual variables: u_k = y_k/rho (scaling by 1/rho won't have any effect initially since y_k = 0)
     }
 
 
@@ -158,12 +163,12 @@ class ADMM
       return time_duration;
     }
 
-  protected:
+  public:
 
     // Structures
     std::vector< gtsam::NonlinearFactorGraph > subgraphs_; // the vector of subgraphs
     std::vector<gtsam::Values> subinitials_; // the vector of subinitials
-    std::vector<int> separators_; // separators in the form <sepkey0, subgraph_id01, subgraph_id02, sepkey1, subgraph_id11, subgraph_id12, ...>
+    std::vector<size_t> separators_; // separators in the form <sepkey0, subgraph_id01, subgraph_id02, sepkey1, subgraph_id11, subgraph_id12, ...>
     gtsam::NonlinearFactorGraph fullGraph_; // full graph for visualization purposes
     std::vector<double> uall_k; // scaled dual variables: u_k = y_k/rho (scaling by 1/rho won't have any effect initially since y_k = 0)
 
@@ -176,6 +181,8 @@ class ADMM
     bool adaptivePenalty_;  // parameter used to decide whether to increase or not the rho (adaptive penalty)
     bool useFlaggedInitialization_; // use flagged initialization    
     bool computeSubgraphGradient_; // to compute subgraph gradient
+    size_t dualDimension_;
+    size_t nrSeparators_;
 
     ADMM::Solver solver_;
     ADMM::Time start,end;
@@ -194,4 +201,6 @@ class ADMM
 
 
 };
+
+#include "ADMM-inl.h"
 #endif
