@@ -21,7 +21,10 @@ target_link_libraries (PartitionAndRunADMM admm boost_system gtsam)
 
 ###########################################################################
 #Tests
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
-include(GtsamBuildTypes)
-include(GtsamTesting)
-add_subdirectory(tests)
+option(BUILD_ADMM_TESTS "If True builds tests for DGS" OFF)
+if(${BUILD_ADMM_TESTS})
+    set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
+    include(GtsamBuildTypes)
+    include(GtsamTesting)
+    add_subdirectory(tests)
+endif()
