@@ -55,10 +55,11 @@ std::map<int, int> metis(gtsam::NonlinearFactorGraph graph, int num_subgraphs){
 }
 
 /********************************************************************************************/
+template<class POSE_TYPE>
 boost::tuple<std::vector<gtsam::NonlinearFactorGraph>, std::vector<gtsam::Values> >
 partitionGraph(gtsam::NonlinearFactorGraph graph,
                gtsam::Values initial,
-               gtsam::PriorFactor<gtsam::Pose2> posePrior,
+               gtsam::PriorFactor<POSE_TYPE> posePrior,
                size_t num_subgraphs, bool useMetisPartitioning, bool useLineGraph, bool orderSubgraphs){
 
   // Subgraph and Subinitials
